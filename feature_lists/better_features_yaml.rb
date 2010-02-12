@@ -2,8 +2,8 @@
 require 'yaml'
 
 data_path = "../ripd/dump-20100201/"
-feature_path = "../ripd/work/us_by_feature/"
-#feature_path = "../ripd/work/world_by_feature/"
+# feature_path = "../ripd/work/us_by_feature/"
+feature_path = "../ripd/work/world_by_feature/"
 
 features = Hash.new
 
@@ -23,7 +23,7 @@ File.open(data_path + "featureCodes_en.txt").each do |line|
 end
 
 features['other'] = []
-features['other'][3] = 'all feature types in the United States with a small number of entries (less than 75) combined into one file. see featureCodes_en.txt for individual feature codes.'
+features['other'][3] = 'all feature types in all countries with a small number of entries (less than 100) combined into one file. see featureCodes_en.txt for individual feature codes.'
 
 sources = [{'source'=>{'title'=>'GeoNames','main_link'=>'http://www.geonames.org','description'=>'The GeoNames geographical database covers all countries and contains over eight million placenames that are available for download free of charge.'}}]
 
@@ -31,8 +31,8 @@ collection = [{'collection'=>{'title'=>'Geolocation','description'=>'A collectio
 
 base_yaml = [{'dataset'=>{
   'title'=>'',
-  'subtitle'=>'United States GeoNames by Feature Type',
-  'description'=>'This dataset separates the GeoNames listed in the United States by feature type. Original data downloaded from GeoNames (http://www.geonames.org).',
+  'subtitle'=>'All Countries GeoNames by Feature Type',
+  'description'=>'This dataset separates the GeoNames listed in all countries by feature type. Original data downloaded from GeoNames (http://www.geonames.org).',
   'collection'=>'Geolocation',
   'owner'=>'MonkeywrenchConsultancy',
   'tags'=>['maps','geonames','locations'],
@@ -71,19 +71,21 @@ base_yaml = [{'dataset'=>{
   
 }}]
 
-yaml_file = File.open(feature_path + "yaml/USGeo_sources.yaml", "w")
+# yaml_file = File.open(feature_path + "yaml/USGeo_sources.yaml", "w")
 
 # puts sources.to_yaml
 # puts collection.to_yaml
 
-yaml_file << sources.to_yaml
-yaml_file << collection.to_yaml
+# yaml_file << sources.to_yaml
+# yaml_file << collection.to_yaml
 
 Dir.foreach(feature_path) do |filename|
-  if filename =~ /US.+\.tsv/
+  # if filename =~ /US.+\.tsv/
+  if filename =~ /world.+\.tsv/
     current_yaml = base_yaml.dup
     yaml_file = File.open(feature_path + "yaml/" + filename[0..-5] + ".yaml", "w")
-    current_yaml[0]['dataset']['title'] = 'United States GeoNames: ' + filename[3..-5].split("_").each{|word| word.capitalize!}.join(" ")
+    # current_yaml[0]['dataset']['title'] = 'United States GeoNames: ' + filename[3..-5].split("_").each{|word| word.capitalize!}.join(" ")
+    current_yaml[0]['dataset']['title'] = 'All Countries GeoNames: ' + filename[6..-5].split("_").each{|word| word.capitalize!}.join(" ")
     current_yaml[0]['dataset']['payloads'][0]['title'] = filename[0..-5]
     record_count = 0
     File.open(feature_path + filename).each do |line|
@@ -91,7 +93,8 @@ Dir.foreach(feature_path) do |filename|
     end
     current_yaml[0]['dataset']['payloads'][0]['title'] = filename[0..-5]
     current_yaml[0]['dataset']['payloads'][0]['records_count'] = record_count
-    current_yaml[0]['dataset']['payloads'][0]['description'] = features[filename[3..-5]][3] 
+    # current_yaml[0]['dataset']['payloads'][0]['description'] = features[filename[3..-5]][3] 
+    current_yaml[0]['dataset']['payloads'][0]['description'] = features[filename[6..-5]][3]
     current_yaml[0]['dataset']['payloads'][0]['files_for_upload'] = ['featureCodes_en.txt',filename]
     yaml_file << current_yaml.to_yaml
   end
