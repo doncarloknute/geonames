@@ -33,7 +33,8 @@ base_yaml = [{'dataset'=>{
   'title'=>'',
   'subtitle'=>'United States GeoNames by Feature Type',
   'description'=>'This dataset separates the GeoNames listed in the United States by feature type. Original data downloaded from GeoNames (http://www.geonames.org).',
-  'collection'=>'',
+  'collection'=>'Geolocation',
+  'owner'=>'MonkeywrenchConsultancy',
   'tags'=>['maps','geonames','locations'],
   'categories'=>['Geography::Geographical Names'],
   'sources'=>['GeoNames','Monkeywrench Consultancy'],
@@ -70,14 +71,18 @@ base_yaml = [{'dataset'=>{
   
 }}]
 
-puts sources.to_yaml
+yaml_file = File.open(feature_path + "yaml/USGeo_sources.yaml", "w")
 
-puts collection.to_yaml
+# puts sources.to_yaml
+# puts collection.to_yaml
+
+yaml_file << sources.to_yaml
+yaml_file << collection.to_yaml
 
 Dir.foreach(feature_path) do |filename|
   if filename =~ /US.+\.tsv/
     current_yaml = base_yaml.dup
-    yaml_file = File.open(feature_path + filename[0..-5] + ".yaml", "w")
+    yaml_file = File.open(feature_path + "yaml/" + filename[0..-5] + ".yaml", "w")
     current_yaml[0]['dataset']['title'] = 'United States GeoNames: ' + filename[3..-5].split("_").each{|word| word.capitalize!}.join(" ")
     current_yaml[0]['dataset']['payloads'][0]['title'] = filename[0..-5]
     record_count = 0
@@ -88,6 +93,7 @@ Dir.foreach(feature_path) do |filename|
     current_yaml[0]['dataset']['payloads'][0]['records_count'] = record_count
     current_yaml[0]['dataset']['payloads'][0]['description'] = features[filename[3..-5]][3] 
     current_yaml[0]['dataset']['payloads'][0]['files_for_upload'] = ['featureCodes_en.txt',filename]
+    yaml_file << current_yaml.to_yaml
   end
-  puts current_yaml.to_yaml
+  # puts current_yaml.to_yaml
 end

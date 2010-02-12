@@ -1,6 +1,6 @@
 data_path = "../ripd/dump-20100201/"
-feature_path = "../ripd/work/us_by_feature/"
-#feature_path = "../ripd/work/world_by_feature/"
+#feature_path = "../ripd/work/us_by_feature/"
+feature_path = "../ripd/work/world_by_feature/"
 
 features = Hash.new
 
@@ -20,13 +20,16 @@ File.open(data_path + "featureCodes_en.txt").each do |line|
 end
 
 Dir.foreach(feature_path) do |filename|
-  if filename =~ /US.+\.tsv/
+#  if filename =~ /US.+\.tsv/
+  if filename =~ /world.+\.tsv/
     yaml_file = File.open(feature_path + filename[0..-5] + ".yaml", "w")
     yaml_file << "dataset:\n"
-    yaml_file << "  title: United States GeoNames by Feature Type\n"
+    #yaml_file << "  title: United States GeoNames by Feature Type\n"
+    yaml_file << "  title: World GeoNames by Feature Type\n"
     yaml_file << "  tags: [ maps,geonames,locations ]\n"
     yaml_file << "  categories: [ \"Geography::Geographical Names\" ]\n"
-    yaml_file << "  description: >-\n    This dataset separates the GeoNames listed in the United States by feature type. Original data downloaded from GeoNames (http://www.geonames.org).\n"
+    #yaml_file << "  description: >-\n    This dataset separates the GeoNames listed in the United States by feature type. Original data downloaded from GeoNames (http://www.geonames.org).\n"
+    yaml_file << "  description: >-\n    This dataset separates the GeoNames listed in all countries by feature type. Original data downloaded from GeoNames (http://www.geonames.org).\n"
     yaml_file << "  sources:\n"
     yaml_file << "    - title: GeoNames\n"
     yaml_file << "      url: \"http://www.geonames.org\"\n"
@@ -39,7 +42,8 @@ Dir.foreach(feature_path) do |filename|
       record_count += 1
     end
     yaml_file << "    records_count: #{record_count}\n"
-    yaml_file << "    description: >-\n      #{features[filename[3..-5]][3]}\n"
+    #yaml_file << "    description: >-\n      #{features[filename[3..-5]][3]}\n"
+    yaml_file << "    description: >-\n      #{features[filename[6..-5]][3]}\n"
     yaml_file << "    fields:\n"
     yaml_file << "      - id:\n"
     yaml_file << "        handle: geo_name_id\n"
